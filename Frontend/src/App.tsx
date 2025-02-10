@@ -13,6 +13,7 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
+          <Route path="/" element={<TaskTracker />} />
           <Route path="/tasks" element={<TaskTracker />} />
           <Route path="/projects" element={<ProjectTracker />} />
         </Routes>

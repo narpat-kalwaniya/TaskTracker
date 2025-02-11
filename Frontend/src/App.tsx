@@ -5,9 +5,12 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import TaskTracker from "./pages/TaskTracker";
 import theme from "./theme";
 import ProjectTracker from "./pages/ProjectTracker";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
+  const queryClient = new QueryClient();
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
@@ -19,6 +22,7 @@ function App() {
         </Routes>
       </Router>
     </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

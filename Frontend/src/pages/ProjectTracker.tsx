@@ -1,10 +1,18 @@
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Box, Button,} from '@mui/material';
 import { useState } from 'react';
-import ProjectModal from '../components/ProjectModal';
+import ReusableTable from '../components/Table';
+import CustomModal from '../components/Modal';
 
 const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
   // Dummy data
+  const columns = [
+    {id: "project_id", label: "Project ID"},
+    {id: "project_name", label: "Project Name"},
+    {id: "start_date", label: "Start Date"},
+    {id: "end_date", label: "End Date"},
+    {id: "owner", label: "Owner"},
+  ]
       const rows = [
     { project_id: "Create Boiler Plate", project_name: 'Item 1', start_date: '31-01-2025', end_date: "pending",owner: "owner"},
     { project_id: "Create Boiler Plate", project_name: 'Item 1', start_date: '31-01-2025', end_date: "pending",owner: "owner"},
@@ -14,31 +22,8 @@ const ProjectTracker = () => {
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button variant="contained" color="primary" onClick={() => setOpen(true)}>Create Project</Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Project ID</TableCell>
-              <TableCell>Project Name</TableCell>
-              <TableCell>Project Start Date</TableCell>
-              <TableCell>Project End Date</TableCell>
-              <TableCell>Project Owner</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow >
-                <TableCell>{row.project_id}</TableCell>
-                <TableCell>{row.project_name}</TableCell>
-                <TableCell>{row.start_date}</TableCell>
-                <TableCell>{row.end_date}</TableCell>
-                <TableCell>{row.owner}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <ProjectModal open={open} onClose={() => setOpen(false)} />
+<ReusableTable columns={columns} rows={rows} onUpdate = {() => {}} onDelete={() => {}}/>
+      <CustomModal modalType='project' open={open} onClose={() => setOpen(false)} />
 
     </Box>
   )

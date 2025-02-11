@@ -15,12 +15,12 @@ import {
   __toESM
 } from "./chunk-DC5AMYBS.js";
 
-// node_modules/@mui/icons-material/esm/Menu.js
+// node_modules/@mui/icons-material/esm/Delete.js
 var import_jsx_runtime = __toESM(require_jsx_runtime());
-var Menu_default = createSvgIcon((0, import_jsx_runtime.jsx)("path", {
-  d: "M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"
-}), "Menu");
+var Delete_default = createSvgIcon((0, import_jsx_runtime.jsx)("path", {
+  d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+}), "Delete");
 export {
-  Menu_default as default
+  Delete_default as default
 };
-//# sourceMappingURL=@mui_icons-material_Menu.js.map
+//# sourceMappingURL=@mui_icons-material_Delete.js.map

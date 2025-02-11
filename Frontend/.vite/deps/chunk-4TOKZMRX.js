@@ -5,7 +5,7 @@ import {
   generateUtilityClasses,
   identifier_default,
   require_prop_types
-} from "./chunk-BRLKLWQM.js";
+} from "./chunk-6LB25WNX.js";
 import {
   __toESM
 } from "./chunk-DC5AMYBS.js";
@@ -50,4 +50,4 @@ export {
   boxClasses_default,
   Box_default
 };
-//# sourceMappingURL=chunk-D2BGHNL5.js.map
+//# sourceMappingURL=chunk-4TOKZMRX.js.map

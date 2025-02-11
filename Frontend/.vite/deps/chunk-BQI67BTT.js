@@ -1,7 +1,7 @@
 import {
   memoTheme_default,
   useDefaultProps
-} from "./chunk-5KTWJD3W.js";
+} from "./chunk-GGVQH4B6.js";
 import {
   alpha,
   chainPropTypes,
@@ -15,7 +15,7 @@ import {
   require_prop_types,
   styled_default,
   useTheme
-} from "./chunk-BRLKLWQM.js";
+} from "./chunk-6LB25WNX.js";
 import {
   require_react
 } from "./chunk-TWJRYSII.js";
@@ -196,4 +196,4 @@ export {
   paperClasses_default,
   Paper_default
 };
-//# sourceMappingURL=chunk-MCXJP2IG.js.map
+//# sourceMappingURL=chunk-BQI67BTT.js.map

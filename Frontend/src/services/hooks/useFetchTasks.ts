@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import ProjectsService from "../requests/ProjectsService";
 import TasksService from "../requests/TasksService";
 
-export const useFetchProjects = () => {
+export const useFetchTasks = () => {
     const { data, isLoading, error } = useQuery({
     queryKey: ["tasksList"],
     queryFn: TasksService.fetchTasks,

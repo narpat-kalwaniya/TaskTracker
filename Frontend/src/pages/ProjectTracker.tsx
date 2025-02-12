@@ -2,9 +2,12 @@ import { Box, Button,} from '@mui/material';
 import { useState } from 'react';
 import ReusableTable from '../components/Table';
 import CustomModal from '../components/Modal';
+import { useFetchProjects } from '../services/hooks/useFetchProjects';
 
 const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
+  const {data: projects, isLoading, error} = useFetchProjects();
+  console.log(projects, isLoading, error)
   // Dummy data
   const columns = [
     {id: "project_id", label: "Project ID"},

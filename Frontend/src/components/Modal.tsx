@@ -14,6 +14,8 @@ import {
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { useCreateTask } from "../services/hooks/useCreateTask";
+import { useCreateProject } from "../services/hooks/useCreateProject";
 
 interface ModalProps {
   open: boolean;
@@ -23,12 +25,20 @@ interface ModalProps {
   users?: { email: string; username: string }[];
 }
 
-const CustomModal: React.FC<ModalProps> = ({ open, onClose, modalType, projects = [], users = [] }) => {
+const CustomModal: React.FC<ModalProps> = ({
+  open,
+  onClose,
+  modalType,
+  projects = [],
+  users = [],
+}) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [projectId, setProjectId] = useState("");
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [assignee, setAssignee] = useState("");
+  const { mutate: createTask } = useCreateTask();
+  const { mutate: createProject } = useCreateProject();
 
   const isTaskModal = modalType === "task";
 
@@ -46,6 +56,12 @@ const CustomModal: React.FC<ModalProps> = ({ open, onClose, modalType, projects 
           project_description: description,
           end_date: dueDate,
         };
+
+    if (isTaskModal) {
+      createTask(data);
+    } else {
+      createProject(data);
+    }
 
     console.log(`Submitted ${modalType}:`, data);
     onClose();

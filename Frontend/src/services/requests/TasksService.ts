@@ -2,10 +2,12 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../../configs/constants";
 
 export const TasksService = {
-  fetchTasks: async () => {
-    const { data } = await axios.get(API_ENDPOINTS.GetTasks);
-    return data;
-  },
+  fetchTasks: async (project_id: number) => {
+  const { data } = await axios.get(API_ENDPOINTS.GetTasks, {
+    params: { project_id },
+  });
+  return data;
+},
   createTask: async (payload: {
     project_id: string;
     task_title: string;

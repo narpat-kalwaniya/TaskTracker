@@ -1,5 +1,5 @@
 import { styled, alpha } from '@mui/material/styles';
-import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, Tabs, Tab } from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, Tabs, Tab, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -48,6 +48,12 @@ export default function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const user = {
+    name: 'Narpat',
+    role: 'Admin',
+    avatarUrl: 'https://i.pravatar.cc/40',
+  };
+
   const getActiveTab = () => {
     if (location.pathname.startsWith('/tasks')) return 1;
     if (location.pathname.startsWith('/projects')) return 0;
@@ -74,12 +80,24 @@ export default function NavBar() {
             <Tab label="Projects" />
             <Tab label="Tasks" />
           </Tabs>
-          <Search sx={{ ml: 'auto' }}>
+          <Search sx={{ ml: 'auto', mr: 2 }}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
           </Search>
+          <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+            <Avatar src={user.avatarUrl} alt={user.name} sx={{ width: 36, height: 36, mr: 1 }} />
+            <Box sx = {{mr:1}}>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                {user.name}
+              </Typography>
+              <Typography variant="body2" sx={{ fontSize: 12, color: 'grey.300' }}>
+                {user.role}
+              </Typography>
+            </Box>
+            
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>

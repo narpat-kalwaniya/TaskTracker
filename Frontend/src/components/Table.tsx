@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,15 +8,12 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Button,
+  Skeleton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useFetchTasks } from "../services/hooks/useFetchTasks";
+import { useNavigate } from "react-router-dom";
 
 interface Column {
   id: string;
@@ -32,21 +29,28 @@ interface ReusableTableProps {
   rows: RowData[];
   onUpdate: (updatedRow: RowData) => void;
   onDelete: (id: string) => void;
+  isLoading: boolean;
 }
 
-const ReusableTable: React.FC<ReusableTableProps> = ({ columns, rows, onUpdate, onDelete }) => {
+const ReusableTable: React.FC<ReusableTableProps> = ({ columns, rows, onUpdate, onDelete, isLoading }) => {
 
+  const navigate = useNavigate();
 
-  const handleEditClick = (row: RowData) => {
-console.log(row)
-  };
-
-
+const handleEditClick = (row: RowData) => {
+  if (row.project_id) {
+    navigate("/tasks", { state: { project_id: row.project_id } });
+  }
+};
+const statusColors: Record<string, string> = {
+  "Done": "#66BB6E",
+  "New": "black",
+  "In Progress": "#F59C34",
+  Cancelled: "#DA5776",
+};
 
   return (
     <TableContainer component={Paper}>
       <Table>
-        {/* Table Header */}
         <TableHead>
           <TableRow>
             {columns.map((column) => (
@@ -54,21 +58,46 @@ console.log(row)
                 {column.label}
               </TableCell>
             ))}
-            <TableCell sx={{ fontWeight: "bold" }}/>
+            <TableCell sx={{ fontWeight: "bold" }} />
           </TableRow>
         </TableHead>
 
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
+          {isLoading
+            ? 
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((column) => (
+                    <TableCell key={column.id}>
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </TableCell>
+                  ))}
+                  <TableCell>
+                    <Skeleton variant="circular" width={24} height={24} />
+                    <Skeleton variant="circular" width={24} height={24} sx={{ ml: 1 }} />
+                  </TableCell>
+                </TableRow>
+              )) : 
+          rows?.map((row) => (
+            <TableRow hover
+              key={row.id}
+              onClick={() => handleEditClick(row)}
+              sx={{
+                cursor: row.project_id ? "pointer" : "default", 
+                backgroundColor: row.project_id ? "transparent" : "#f5f5f5", 
+              }}
+            >
               {columns.map((column) => (
-                <TableCell key={column.id}>{row[column.id]}</TableCell>
+                <TableCell key={column.id} sx={{
+                    color: column.id === "status" ? statusColors[row[column.id]] || "inherit" : "inherit",
+                    fontWeight: column.id === "status" ? "bold" : "normal",
+                  }}>{row[column.id]}</TableCell>
               ))}
               <TableCell>
-                <IconButton onClick={() => handleEditClick(row)} color="default">
+                <IconButton onClick={(e) => { e.stopPropagation(); onUpdate(row); }} color="default">
                   <EditIcon />
                 </IconButton>
-                <IconButton onClick={() => onDelete(row.id)} color="default">
+                <IconButton onClick={(e) => { e.stopPropagation(); onDelete(row.id); }} color="default">
                   <DeleteIcon />
                 </IconButton>
               </TableCell>

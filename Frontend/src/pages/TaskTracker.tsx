@@ -2,9 +2,13 @@ import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import ReusableTable from "../components/Table";
 import CustomModal from "../components/Modal";
+import { useFetchTasks } from "../services/hooks/useFetchTasks";
 
 const TaskTracker = () => {
   const [open, setOpen] = useState(false);
+
+  const { data: tasks, isLoading } = useFetchTasks();
+
   const projects = [
     { id: "1", name: "Project A" },
     { id: "2", name: "Project B" },
@@ -16,38 +20,14 @@ const TaskTracker = () => {
   ];
 
   const taskColumns = [
-    { id: "title", label: "Title" },
-    { id: "description", label: "Description" },
+    { id: "task_title", label: "Title" },
+    { id: "task_description", label: "Description" },
     { id: "due_date", label: "Due Date" },
+    { id: "task_owner", label: "Owner" },
+    { id: "assignee_email", label: "Assignee" },
     { id: "status", label: "Status" },
-    { id: "owner", label: "Owner" },
-    { id: "project", label: "Project" },
   ];
 
-  const taskRows = [
-    {
-      title: "Create Boiler Plate",
-      description: "Item 1",
-      due_date: "31-01-2025",
-      status: "pending",
-      owner: "owner",
-      project: "FSD-1",
-    },
-    {
-      title: "Create Boiler Plate",
-      description: "Item 1",
-      due_date: "31-01-2025",
-      status: "completed",
-      project: "FSD-1",
-    },
-    {
-      title: "Create Boiler Plate",
-      description: "Item 1",
-      due_date: "31-01-2025",
-      status: "todo",
-      project: "FSD-1",
-    },
-  ];
   return (
     <Box sx={{ width: "100vw", px: 2, mt: 10 }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
@@ -61,9 +41,10 @@ const TaskTracker = () => {
       </Box>
       <ReusableTable
         columns={taskColumns}
-        rows={taskRows}
+        rows={tasks?.data?.task_data}
         onUpdate={() => {}}
         onDelete={() => {}}
+        isLoading={isLoading}
       />
       ;
       <CustomModal

@@ -14,40 +14,58 @@ import {
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { useCreateTask } from "../services/hooks/useCreateTask";
+import { useCreateProject } from "../services/hooks/useCreateProject";
+import { useLocation } from "react-router-dom";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   modalType: "task" | "project";
-  projects?: { id: string; name: string }[];
   users?: { email: string; username: string }[];
 }
 
-const CustomModal: React.FC<ModalProps> = ({ open, onClose, modalType, projects = [], users = [] }) => {
+const CustomModal: React.FC<ModalProps> = ({
+  open,
+  onClose,
+  modalType,
+  users = [],
+}) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [projectId, setProjectId] = useState("");
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [assignee, setAssignee] = useState("");
+  const { mutate: createTask } = useCreateTask();
+  const { mutate: createProject } = useCreateProject();
 
   const isTaskModal = modalType === "task";
+  const location = useLocation();
+  const project_id = location.state?.project_id; 
 
   const handleSubmit = () => {
     const data = isTaskModal
       ? {
-          project_id: projectId,
+          project_id: project_id,
           task_title: title,
           task_description: description,
-          due_date: dueDate,
-          assignee: assignee || null,
+          due_date: dueDate ?? "",
+          assignee_email: assignee || null,
+          task_owner_email: "email",
+          task_owner: "name"
         }
       : {
-          project_title: title,
+          project_title: title ?? "",
           project_description: description,
-          end_date: dueDate,
+          project_end_date: dueDate ?? "",
+          creator_email: "email",
+          creator_username: "name"
         };
 
-    console.log(`Submitted ${modalType}:`, data);
+    if (isTaskModal) {
+      createTask(data);
+    } else {
+      createProject(data);
+    }
     onClose();
   };
 
@@ -94,31 +112,7 @@ const CustomModal: React.FC<ModalProps> = ({ open, onClose, modalType, projects 
               required
             />
           </Grid>
-
-          {isTaskModal && (
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel shrink={true}>Project</InputLabel>
-                <Select
-                  value={projectId}
-                  onChange={(e) => setProjectId(e.target.value)}
-                  label="Project"
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    Select a Project
-                  </MenuItem>
-                  {projects.map((project) => (
-                    <MenuItem key={project.id} value={project.id}>
-                      {project.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          )}
-
-          <Grid item xs={12} sm={isTaskModal ? 6 : 12}>
+          <Grid item xs={12} sm={ 12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label={isTaskModal ? "Due Date" : "Project End Date"}

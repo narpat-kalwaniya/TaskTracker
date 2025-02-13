@@ -4,14 +4,14 @@ import NavBar from "./layout/AppBar";
 import TaskTracker from "./pages/TaskTracker";
 import ProjectTracker from "./pages/ProjectTracker";
 import Login from "./pages/Auth/Login";
-import { useAuth } from "./hooks/useAuth";
+// import { useAuth } from "./hooks/useAuth";
 import AccessDenied from "./pages/Auth/AccessDenied";
 import { error_messages } from "./configs/constants";
 import ProtectedRoutes from "./pages/Auth/ProtectedRoutes";
 import LoginError from "./pages/Auth/LoginError";
 
 function App() {
-  useAuth();
+  // useAuth();
   return (
     <Routes>
       <Route element={<ProtectedRoutes />}>

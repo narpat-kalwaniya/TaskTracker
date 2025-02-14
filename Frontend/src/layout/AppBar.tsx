@@ -13,6 +13,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useMemo } from "react";
+import { getUserDetails } from "../utils/helper";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -58,11 +60,12 @@ export default function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const user = {
-    name: "Narpat",
-    role: "Admin",
-    avatarUrl: "https://i.pravatar.cc/40",
-  };
+  const avatarUrl = "https://i.pravatar.cc/40";
+
+  const user = useMemo(() => {
+    const userInfo = getUserDetails();
+    return userInfo?.data?.data[0];
+  }, []);
 
   const getActiveTab = () => {
     if (location.pathname.startsWith("/tasks")) return 1;
@@ -114,13 +117,13 @@ export default function NavBar() {
           </Search>
           <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
             <Avatar
-              src={user.avatarUrl}
-              alt={user.name}
+              src={avatarUrl}
+              alt={user.user_name}
               sx={{ width: 36, height: 36, mr: 1 }}
             />
             <Box sx={{ mr: 1 }}>
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                {user.name}
+                {user.user_name}
               </Typography>
               <Typography
                 variant="body2"

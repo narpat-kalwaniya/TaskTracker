@@ -4,14 +4,12 @@ import NavBar from "./layout/AppBar";
 import TaskTracker from "./pages/TaskTracker";
 import ProjectTracker from "./pages/ProjectTracker";
 import Login from "./pages/Auth/Login";
-// import { useAuth } from "./hooks/useAuth";
 import AccessDenied from "./pages/Auth/AccessDenied";
 import { error_messages } from "./configs/constants";
 import ProtectedRoutes from "./pages/Auth/ProtectedRoutes";
 import LoginError from "./pages/Auth/LoginError";
 
 function App() {
-  // useAuth();
   return (
     <Routes>
       <Route element={<ProtectedRoutes />}>
@@ -23,11 +21,11 @@ function App() {
               <div
                 style={{
                   marginTop: "64px",
-                  height: "95vh",
+                  height: "100vh",
                 }}
               >
                 <Routes>
-                  <Route path="/" element={<TaskTracker />} />
+                  <Route path="/" element={<ProjectTracker />} />
                   <Route path="/tasks" element={<TaskTracker />} />
                   <Route path="/projects" element={<ProjectTracker />} />
                 </Routes>

@@ -1,28 +1,51 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import NavBar from "./layout/AppBar";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import TaskTracker from "./pages/TaskTracker";
-import theme from "./theme";
 import ProjectTracker from "./pages/ProjectTracker";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Login from "./pages/Auth/Login";
+import AccessDenied from "./pages/Auth/AccessDenied";
+import { error_messages } from "./configs/constants";
+import ProtectedRoutes from "./pages/Auth/ProtectedRoutes";
+import LoginError from "./pages/Auth/LoginError";
 
 function App() {
-  const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<TaskTracker />} />
-          <Route path="/tasks" element={<TaskTracker />} />
-          <Route path="/projects" element={<ProjectTracker />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-    </QueryClientProvider>
+    <Routes>
+      <Route element={<ProtectedRoutes />}>
+        <Route
+          path="*"
+          element={
+            <>
+              <NavBar />
+              <div
+                style={{
+                  marginTop: "64px",
+                  height: "100vh",
+                }}
+              >
+                <Routes>
+                  <Route path="/" element={<ProjectTracker />} />
+                  <Route path="/tasks" element={<TaskTracker />} />
+                  <Route path="/projects" element={<ProjectTracker />} />
+                </Routes>
+              </div>
+            </>
+          }
+        ></Route>
+      </Route>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/access-denied"
+        element={
+          <AccessDenied
+            headerText={error_messages.access_denied_text}
+            descriptionText={error_messages.access_denied_des}
+          />
+        }
+      />
+      <Route path="/login-error" element={<LoginError />} />
+    </Routes>
   );
 }
 

@@ -44,7 +44,7 @@ const TaskTracker = () => {
         rows={tasks?.data?.task_data}
         onUpdate={() => {}}
         onDelete={() => {}}
-        isLoading = {isLoading}
+        isLoading={isLoading}
       />
       ;
       <CustomModal

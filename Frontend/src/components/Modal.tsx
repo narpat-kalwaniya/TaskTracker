@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -17,12 +17,17 @@ import dayjs from "dayjs";
 import { useCreateTask } from "../services/hooks/useCreateTask";
 import { useCreateProject } from "../services/hooks/useCreateProject";
 import { useLocation } from "react-router-dom";
+import { RowData } from "./Table";
+import { STATUS_COLORS, TASK_STATUS_OPTIONS } from "../configs/constants";
+import { useUpdateTask } from "../services/hooks/useUpdateTask";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   modalType: "task" | "project";
   users?: { email: string; username: string }[];
+  task?: RowData | null;
+  setTask?: any;
 }
 
 const CustomModal: React.FC<ModalProps> = ({
@@ -30,42 +35,85 @@ const CustomModal: React.FC<ModalProps> = ({
   onClose,
   modalType,
   users = [],
+  task,
+  setTask,
 }) => {
+  const isTaskModal = modalType === "task";
+  const location = useLocation();
+  const project_id = location.state?.project_id;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [assignee, setAssignee] = useState("");
+  const [status, setStatus] = useState("New");
+
   const { mutate: createTask } = useCreateTask();
+  const { mutate: updateTask } = useUpdateTask();
   const { mutate: createProject } = useCreateProject();
 
-  const isTaskModal = modalType === "task";
-  const location = useLocation();
-  const project_id = location.state?.project_id; 
+  useEffect(() => {
+    if (!open) {
+      setTitle("");
+      setDescription("");
+      setDueDate(null);
+      setAssignee("");
+      setStatus("New");
+    }
+    if (open) {
+      if (task) {
+        setTitle(task.task_title);
+        setDescription(task.task_description);
+        setDueDate(task.due_date ? dayjs(task.due_date) : null);
+        setAssignee(task.assignee_email || "");
+        setStatus(task.status || "New");
+      } else {
+        setTitle("");
+        setDescription("");
+        setDueDate(null);
+        setAssignee("");
+        setStatus("New");
+      }
+    }
+  }, [open, task]);
+
+  const isEditing = !!task;
 
   const handleSubmit = () => {
     const data = isTaskModal
       ? {
-          project_id: project_id,
+          task_id: task?.task_id,
+          project_id,
           task_title: title,
           task_description: description,
           due_date: dueDate ?? "",
           assignee_email: assignee || null,
-          task_owner_email: "email",
-          task_owner: "name"
+          status: status,
+          task_owner_email: "",
+          task_owner: "",
         }
       : {
           project_title: title ?? "",
           project_description: description,
           project_end_date: dueDate ?? "",
           creator_email: "email",
-          creator_username: "name"
+          creator_username: "name",
         };
 
     if (isTaskModal) {
-      createTask(data);
+      if (isEditing) {
+        updateTask(data);
+      } else {
+        createTask(data);
+      }
     } else {
       createProject(data);
     }
+    setTitle("");
+    setDescription("");
+    setDueDate(null);
+    setAssignee("");
+    setStatus("New");
+    setTask(null);
     onClose();
   };
 
@@ -85,7 +133,11 @@ const CustomModal: React.FC<ModalProps> = ({
         }}
       >
         <Typography variant="h6" id="modal-title" gutterBottom>
-          {isTaskModal ? "Create Task" : "Create Project"}
+          {isEditing
+            ? "Update Task"
+            : isTaskModal
+            ? "Create Task"
+            : "Create Project"}
         </Typography>
 
         <Grid container spacing={2}>
@@ -112,7 +164,8 @@ const CustomModal: React.FC<ModalProps> = ({
               required
             />
           </Grid>
-          <Grid item xs={12} sm={ 12}>
+
+          <Grid item xs={12} sm={12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label={isTaskModal ? "Due Date" : "Project End Date"}
@@ -137,8 +190,31 @@ const CustomModal: React.FC<ModalProps> = ({
                 >
                   <MenuItem value="">None</MenuItem>
                   {users.map((user) => (
-                    <MenuItem key={user.username} value={user.username}>
+                    <MenuItem key={user.email} value={user.email}>
                       {user.username}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
+
+          {task && (
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel shrink={true}>Status</InputLabel>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  label="Status"
+                >
+                  {TASK_STATUS_OPTIONS.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ color: STATUS_COLORS[option.value] }}
+                    >
+                      {option.label}
                     </MenuItem>
                   ))}
                 </Select>
@@ -151,7 +227,7 @@ const CustomModal: React.FC<ModalProps> = ({
               Cancel
             </Button>
             <Button variant="contained" onClick={handleSubmit}>
-              Submit
+              {isEditing ? "Update" : "Submit"}
             </Button>
           </Grid>
         </Grid>

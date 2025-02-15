@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -11,16 +11,15 @@ import {
   Skeleton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useFetchTasks } from "../services/hooks/useFetchTasks";
 import { useNavigate } from "react-router-dom";
+import { STATUS_COLORS } from "../configs/constants";
 
 interface Column {
   id: string;
   label: string;
 }
 
-interface RowData {
+export interface RowData {
   [key: string]: any;
 }
 
@@ -36,17 +35,16 @@ const ReusableTable: React.FC<ReusableTableProps> = ({ columns, rows, onUpdate, 
 
   const navigate = useNavigate();
 
-const handleEditClick = (row: RowData) => {
+const handleProjectRowClick = (row: RowData) => {
   if (row.project_id) {
     navigate("/tasks", { state: { project_id: row.project_id } });
   }
 };
-const statusColors: Record<string, string> = {
-  "Done": "#66BB6E",
-  "New": "black",
-  "In Progress": "#F59C34",
-  Cancelled: "#DA5776",
-};
+
+const handleEditTask = (row: RowData) => {
+  onUpdate(row)
+}
+
 
   return (
     <TableContainer component={Paper}>
@@ -81,7 +79,7 @@ const statusColors: Record<string, string> = {
           rows?.map((row) => (
             <TableRow hover
               key={row.id}
-              onClick={() => handleEditClick(row)}
+              onClick={() => handleProjectRowClick(row)}
               sx={{
                 cursor: row.project_id ? "pointer" : "default", 
                 backgroundColor: row.project_id ? "transparent" : "#f5f5f5", 
@@ -89,17 +87,17 @@ const statusColors: Record<string, string> = {
             >
               {columns.map((column) => (
                 <TableCell key={column.id} sx={{
-                    color: column.id === "status" ? statusColors[row[column.id]] || "inherit" : "inherit",
+                    color: column.id === "status" ? STATUS_COLORS[row[column.id]] || "inherit" : "inherit",
                     fontWeight: column.id === "status" ? "bold" : "normal",
                   }}>{row[column.id]}</TableCell>
               ))}
               <TableCell>
-                <IconButton onClick={(e) => { e.stopPropagation(); onUpdate(row); }} color="default">
+                <IconButton onClick={() => handleEditTask(row)} color="default">
                   <EditIcon />
                 </IconButton>
-                <IconButton onClick={(e) => { e.stopPropagation(); onDelete(row.id); }} color="default">
+                {/* <IconButton onClick={(e) => { e.stopPropagation(); onDelete(row.id); }} color="default">
                   <DeleteIcon />
-                </IconButton>
+                </IconButton> */}
               </TableCell>
             </TableRow>
           ))}

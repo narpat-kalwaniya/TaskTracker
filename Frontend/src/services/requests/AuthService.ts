@@ -15,9 +15,9 @@ export interface UserInfo {
 }
 
 export const AuthService = {
-  fetchUserInfo: async (payload: { email: string }): Promise<UserInfo> => {
-    const { data } = await axios.get(
-      `${API_ENDPOINTS.UserInfo}?user_email=${payload.email}`
+  fetchUserInfo: async (payload?: { email: string }): Promise<UserInfo> => {
+    const { data } = await axios.get( payload ? 
+      `${API_ENDPOINTS.UserInfo}?user_email=${payload?.email}` : API_ENDPOINTS.UserInfo
     );
     return data;
   },

@@ -9,7 +9,7 @@ const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
   const { data: projects, isLoading,  } = useFetchProjects();
   return (
-    <Box sx={{ width: "100vw", px: 2, mt: 10 }}>
+    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button
           variant="contained"

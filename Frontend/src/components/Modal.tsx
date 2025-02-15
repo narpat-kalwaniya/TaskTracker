@@ -10,6 +10,7 @@ import {
   InputLabel,
   Button,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -25,7 +26,7 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   modalType: "task" | "project";
-  users?: { email: string; username: string }[];
+  users?: { user_email: string; user_name: string; role: string }[];
   task?: RowData | null;
   setTask?: any;
 }
@@ -82,31 +83,40 @@ const CustomModal: React.FC<ModalProps> = ({
     const data = isTaskModal
       ? {
           task_id: task?.task_id,
-          project_id,
+          project_id: project_id || "",
           task_title: title,
           task_description: description,
-          due_date: dueDate ?? "",
-          assignee_email: assignee || null,
+          due_date: dueDate || null,
+          assignee_email: assignee,
           status: status,
-          task_owner_email: "",
-          task_owner: "",
+          task_owner_email: "email",
+          task_owner: "name",
         }
       : {
           project_title: title ?? "",
           project_description: description,
-          project_end_date: dueDate ?? "",
+          project_end_date: dueDate || null,
           creator_email: "email",
           creator_username: "name",
         };
+    const createTaskPayload = {
+      task_title: title,
+      task_description: description,
+      project_id: project_id,
+      due_date: dueDate,
+      assignee_email: assignee,
+      task_owner_email: "email",
+      task_owner: "name",
+    };
 
     if (isTaskModal) {
       if (isEditing) {
-        updateTask(data);
+        if (data.task_title) updateTask(data);
       } else {
-        createTask(data);
+        createTask(createTaskPayload);
       }
     } else {
-      createProject(data);
+      if (data.project_title) createProject(data);
     }
     setTitle("");
     setDescription("");
@@ -132,7 +142,12 @@ const CustomModal: React.FC<ModalProps> = ({
           borderRadius: 2,
         }}
       >
-        <Typography variant="h6" id="modal-title" gutterBottom>
+        <Typography
+          variant="h6"
+          id="modal-title"
+          gutterBottom
+          sx={{ color: "black" }}
+        >
           {isEditing
             ? "Update Task"
             : isTaskModal
@@ -189,9 +204,22 @@ const CustomModal: React.FC<ModalProps> = ({
                   displayEmpty
                 >
                   <MenuItem value="">None</MenuItem>
-                  {users.map((user) => (
-                    <MenuItem key={user.email} value={user.email}>
-                      {user.username}
+
+                  {users?.map((user) => (
+                    <MenuItem key={user.user_email} value={user.user_email}>
+                      <Tooltip
+                        title={
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <span>Role: {user.role}</span>
+                            <span>Email: {user.user_email}</span>
+                          </div>
+                        }
+                        placement="right"
+                      >
+                        <span>{user.user_name}</span>
+                      </Tooltip>
                     </MenuItem>
                   ))}
                 </Select>

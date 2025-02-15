@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
   GetProjects: "https://fsd-case-study.onrender.com/api/get_projects",
   GetTasks: "https://fsd-case-study.onrender.com/api/get_task",
   UpdateTask: "https://fsd-case-study.onrender.com/api/update_task/",
+  UserInfo: "https://fsd-case-study.onrender.com/api/get_user_list",
 };
 
 export const TASK_STATUS_OPTIONS = [
@@ -37,3 +38,12 @@ export const PROJECT_COLUMNS = [
     { id: "end_date", label: "End Date" },
     { id: "project_owner", label: "Owner" },
   ];
+
+export const error_messages = {
+  access_denied_text: "Access Denied !",
+  access_denied_des:
+    "You do not have the required permissions to view this page. Please contact your administrator for access.",
+  unauthorised_text: "Unauthorized Access",
+  unauthorised_des:
+    "You do not have the necessary permissions to access this application. Please contact your administrator for assistance.",
+};

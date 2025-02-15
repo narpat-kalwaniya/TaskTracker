@@ -31,7 +31,7 @@ interface ReusableTableProps {
   isLoading: boolean;
 }
 
-const ReusableTable: React.FC<ReusableTableProps> = ({ columns, rows, onUpdate, onDelete, isLoading }) => {
+const ReusableTable: React.FC<ReusableTableProps> = ({ columns, rows, onUpdate, isLoading }) => {
 
   const navigate = useNavigate();
 

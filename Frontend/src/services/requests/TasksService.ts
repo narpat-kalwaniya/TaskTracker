@@ -3,12 +3,12 @@ import { API_ENDPOINTS } from "../../configs/constants";
 import { Dayjs } from "dayjs";
 
 interface UpdateTaskParams {
-  task_title: string;
-  task_description: string;
-  assignee_email: string;
-  status: string;
-  due_date: Dayjs;
-  task_id: number
+  task_title: string | undefined;
+  task_description: string | undefined;
+  assignee_email: string | undefined;
+  status: string | undefined;
+  due_date: Dayjs | null;
+  task_id: number | undefined
 }
 
 export const TasksService = {
@@ -19,17 +19,17 @@ export const TasksService = {
     return data;
   },
   createTask: async (payload: {
-    project_id: string;
-    task_title: string;
-    task_description: string;
-    due_date: string;
-    assignee: string;
+    project_id: string | undefined;
+    task_title: string | undefined;
+    task_description: string | undefined;
+    due_date: Dayjs | null;
+    assignee_email: string | undefined;
   }) => {
     return axios.post(API_ENDPOINTS.CreateTask, payload);
   },
   updateTask: async (taskData: UpdateTaskParams) => {
     const response = await axios.put(
-      `${API_ENDPOINTS.UpdateTask}$${taskData.task_id}`,
+      `${API_ENDPOINTS.UpdateTask}${taskData.task_id}`,
       taskData
     );
     return response.data;

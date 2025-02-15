@@ -4,17 +4,14 @@ import ReusableTable, { RowData } from "../components/Table";
 import CustomModal from "../components/Modal";
 import { useFetchTasks } from "../services/hooks/useFetchTasks";
 import { TASK_COLUMNS } from "../configs/constants";
+import { useFetchUsers } from "../services/hooks/useFetchUsers";
 
 const TaskTracker = () => {
   const [open, setOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<RowData | null>(null);
 
   const { data: tasks, isLoading } = useFetchTasks();
-
-  const users = [
-    { email: "john@example.com", username: "JohnDoe" },
-    { email: "jane@example.com", username: "JaneDoe" },
-  ];
+    const {data: users} = useFetchUsers()
 
 
   const handleCreateTask = () => {
@@ -35,7 +32,7 @@ const handleCloseModal = () => {
   console.log(open, selectedTask)
 
   return (
-    <Box sx={{ width: "100vw", px: 2, mt: 10 }}>
+    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button
           variant="contained"
@@ -50,14 +47,13 @@ const handleCloseModal = () => {
         rows={tasks?.data?.task_data}
         onUpdate={handleModifyTask}
         onDelete={() => {}}
-        isLoading = {isLoading}
+        isLoading={isLoading}
       />
-      ;
       <CustomModal
         modalType="task"
         open={open}
         onClose={handleCloseModal}
-        users={users}
+        users={users?.data?.data }
         task = {selectedTask}
         setTask={setSelectedTask}
       />

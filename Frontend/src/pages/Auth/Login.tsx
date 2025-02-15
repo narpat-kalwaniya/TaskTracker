@@ -17,8 +17,6 @@ const GoogleSSO = () => {
     return getUserDetails();
   }, [data]);
 
-  console.log(userInfo)
-  
   useEffect(() => {
     if (data?.data?.app_access) {
       sessionStorage.setItem("UserDetails", JSON.stringify(data));

@@ -73,8 +73,6 @@ export default function NavBar() {
     return false;
   };
 
-  console.log(user)
-
   return (
     <Box sx={{ width: "100%" }}>
       <AppBar position="fixed">

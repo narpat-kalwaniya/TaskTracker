@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Modal,
   Box,
@@ -21,6 +21,7 @@ import { useLocation } from "react-router-dom";
 import { RowData } from "./Table";
 import { STATUS_COLORS, TASK_STATUS_OPTIONS } from "../configs/constants";
 import { useUpdateTask } from "../services/hooks/useUpdateTask";
+import { getUserDetails } from "../utils/helper";
 
 interface ModalProps {
   open: boolean;
@@ -78,6 +79,10 @@ const CustomModal: React.FC<ModalProps> = ({
   }, [open, task]);
 
   const isEditing = !!task;
+  const user = useMemo(() => {
+    const userInfo = getUserDetails();
+    return userInfo?.data?.data[0];
+  }, []);
 
   const handleSubmit = () => {
     const data = isTaskModal
@@ -89,15 +94,15 @@ const CustomModal: React.FC<ModalProps> = ({
           due_date: dueDate || null,
           assignee_email: assignee,
           status: status,
-          task_owner_email: "email",
-          task_owner: "name",
+          task_owner_email: user.user_email,
+          task_owner: user.user_name,
         }
       : {
           project_title: title ?? "",
           project_description: description,
           project_end_date: dueDate || null,
-          creator_email: "email",
-          creator_username: "name",
+          creator_email: user.user_email,
+          creator_username: user.user_name,
         };
     const createTaskPayload = {
       task_title: title,
@@ -105,8 +110,8 @@ const CustomModal: React.FC<ModalProps> = ({
       project_id: project_id,
       due_date: dueDate,
       assignee_email: assignee,
-      task_owner_email: "email",
-      task_owner: "name",
+      task_owner_email: user.user_email,
+      task_owner: user.user_name,
     };
 
     if (isTaskModal) {

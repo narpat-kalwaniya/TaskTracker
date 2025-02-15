@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Modal,
   Box,
@@ -10,6 +10,7 @@ import {
   InputLabel,
   Button,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -17,12 +18,18 @@ import dayjs from "dayjs";
 import { useCreateTask } from "../services/hooks/useCreateTask";
 import { useCreateProject } from "../services/hooks/useCreateProject";
 import { useLocation } from "react-router-dom";
+import { RowData } from "./Table";
+import { STATUS_COLORS, TASK_STATUS_OPTIONS } from "../configs/constants";
+import { useUpdateTask } from "../services/hooks/useUpdateTask";
+import { getUserDetails } from "../utils/helper";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   modalType: "task" | "project";
-  users?: { email: string; username: string }[];
+  users?: { user_email: string; user_name: string; role: string }[];
+  task?: RowData | null;
+  setTask?: any;
 }
 
 const CustomModal: React.FC<ModalProps> = ({
@@ -30,42 +37,98 @@ const CustomModal: React.FC<ModalProps> = ({
   onClose,
   modalType,
   users = [],
+  task,
+  setTask,
 }) => {
+  const isTaskModal = modalType === "task";
+  const location = useLocation();
+  const project_id = location.state?.project_id;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [assignee, setAssignee] = useState("");
+  const [status, setStatus] = useState("New");
+
   const { mutate: createTask } = useCreateTask();
+  const { mutate: updateTask } = useUpdateTask();
   const { mutate: createProject } = useCreateProject();
 
-  const isTaskModal = modalType === "task";
-  const location = useLocation();
-  const project_id = location.state?.project_id; 
+  useEffect(() => {
+    if (!open) {
+      setTitle("");
+      setDescription("");
+      setDueDate(null);
+      setAssignee("");
+      setStatus("New");
+    }
+    if (open) {
+      if (task) {
+        setTitle(task.task_title);
+        setDescription(task.task_description);
+        setDueDate(task.due_date ? dayjs(task.due_date) : null);
+        setAssignee(task.assignee_email || "");
+        setStatus(task.status || "New");
+      } else {
+        setTitle("");
+        setDescription("");
+        setDueDate(null);
+        setAssignee("");
+        setStatus("New");
+      }
+    }
+  }, [open, task]);
+
+  const isEditing = !!task;
+  const user = useMemo(() => {
+    const userInfo = getUserDetails();
+    return userInfo?.data?.data[0];
+  }, []);
 
   const handleSubmit = () => {
     const data = isTaskModal
       ? {
-          project_id: project_id,
+          task_id: task?.task_id,
+          project_id: project_id || "",
           task_title: title,
           task_description: description,
-          due_date: dueDate ?? "",
-          assignee_email: assignee || null,
-          task_owner_email: "email",
-          task_owner: "name"
+          due_date: dueDate || null,
+          assignee_email: assignee,
+          status: status,
+          task_owner_email: user.user_email,
+          task_owner: user.user_name,
         }
       : {
           project_title: title ?? "",
           project_description: description,
-          project_end_date: dueDate ?? "",
-          creator_email: "email",
-          creator_username: "name"
+          project_end_date: dueDate || null,
+          creator_email: user.user_email,
+          creator_username: user.user_name,
         };
+    const createTaskPayload = {
+      task_title: title,
+      task_description: description,
+      project_id: project_id,
+      due_date: dueDate,
+      assignee_email: assignee,
+      task_owner_email: user.user_email,
+      task_owner: user.user_name,
+    };
 
     if (isTaskModal) {
-      createTask(data);
+      if (isEditing) {
+        if (data.task_title) updateTask(data);
+      } else {
+        createTask(createTaskPayload);
+      }
     } else {
-      createProject(data);
+      if (data.project_title) createProject(data);
     }
+    setTitle("");
+    setDescription("");
+    setDueDate(null);
+    setAssignee("");
+    setStatus("New");
+    setTask(null);
     onClose();
   };
 
@@ -84,8 +147,17 @@ const CustomModal: React.FC<ModalProps> = ({
           borderRadius: 2,
         }}
       >
-        <Typography variant="h6" id="modal-title" gutterBottom>
-          {isTaskModal ? "Create Task" : "Create Project"}
+        <Typography
+          variant="h6"
+          id="modal-title"
+          gutterBottom
+          sx={{ color: "black" }}
+        >
+          {isEditing
+            ? "Update Task"
+            : isTaskModal
+            ? "Create Task"
+            : "Create Project"}
         </Typography>
 
         <Grid container spacing={2}>
@@ -112,7 +184,8 @@ const CustomModal: React.FC<ModalProps> = ({
               required
             />
           </Grid>
-          <Grid item xs={12} sm={ 12}>
+
+          <Grid item xs={12} sm={12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label={isTaskModal ? "Due Date" : "Project End Date"}
@@ -136,9 +209,45 @@ const CustomModal: React.FC<ModalProps> = ({
                   displayEmpty
                 >
                   <MenuItem value="">None</MenuItem>
-                  {users.map((user) => (
-                    <MenuItem key={user.username} value={user.username}>
-                      {user.username}
+
+                  {users?.map((user) => (
+                    <MenuItem key={user.user_email} value={user.user_email}>
+                      <Tooltip
+                        title={
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <span>Role: {user.role}</span>
+                            <span>Email: {user.user_email}</span>
+                          </div>
+                        }
+                        placement="right"
+                      >
+                        <span>{user.user_name}</span>
+                      </Tooltip>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
+
+          {task && (
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel shrink={true}>Status</InputLabel>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  label="Status"
+                >
+                  {TASK_STATUS_OPTIONS.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ color: STATUS_COLORS[option.value] }}
+                    >
+                      {option.label}
                     </MenuItem>
                   ))}
                 </Select>
@@ -151,7 +260,7 @@ const CustomModal: React.FC<ModalProps> = ({
               Cancel
             </Button>
             <Button variant="contained" onClick={handleSubmit}>
-              Submit
+              {isEditing ? "Update" : "Submit"}
             </Button>
           </Grid>
         </Grid>

@@ -1,38 +1,47 @@
 import { Box, Button } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ReusableTable from "../components/Table";
 import CustomModal from "../components/Modal";
 import { useFetchProjects } from "../services/hooks/useFetchProjects";
+import { PROJECT_COLUMNS } from "../configs/constants";
+import { getUserDetails } from "../utils/helper";
+import Toaster from "../components/Snackbar";
 
 const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
-  const { data: projects, isLoading,  } = useFetchProjects();
+  const [openToaster, setOpenToaster] = useState<boolean>(false);
+  const { data: projects, isLoading } = useFetchProjects();
 
-  const columns = [
-    { id: "project_id", label: "Project ID" },
-    { id: "project_name", label: "Project Name" },
-    { id: "description", label: "Description" },
-    { id: "start_date", label: "Start Date" },
-    { id: "end_date", label: "End Date" },
-    { id: "project_owner", label: "Owner" },
-  ];
+  const user = useMemo(() => {
+    const userInfo = getUserDetails();
+    return userInfo?.data?.data[0];
+  }, []);
+
+  const handleCreateProject = () => {
+    if (user.role !== "Viewer") {
+      setOpen(true);
+    } else {
+      setOpenToaster(true);
+    }
+  };
   return (
-    <Box sx={{ width: "100vw", px: 2, mt: 10 }}>
+    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
+      <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={handleCreateProject}
         >
           Create Project
         </Button>
       </Box>
       <ReusableTable
-        columns={columns}
+        columns={PROJECT_COLUMNS}
         rows={projects}
         onUpdate={() => {}}
         onDelete={() => {}}
-        isLoading = {isLoading}
+        isLoading={isLoading}
       />
       <CustomModal
         modalType="project"

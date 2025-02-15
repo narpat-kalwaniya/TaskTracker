@@ -1,58 +1,67 @@
 import { Box, Button } from "@mui/material";
-import { useState } from "react";
-import ReusableTable from "../components/Table";
+import { useMemo, useState } from "react";
+import ReusableTable, { RowData } from "../components/Table";
 import CustomModal from "../components/Modal";
 import { useFetchTasks } from "../services/hooks/useFetchTasks";
+import { TASK_COLUMNS } from "../configs/constants";
+import { useFetchUsers } from "../services/hooks/useFetchUsers";
+import { getUserDetails } from "../utils/helper";
+import Toaster from "../components/Snackbar";
 
 const TaskTracker = () => {
   const [open, setOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<RowData | null>(null);
+  const [openToaster, setOpenToaster] = useState<boolean>(false);
+
+  const user = useMemo(() => {
+    const userInfo = getUserDetails();
+    return userInfo?.data?.data[0];
+  }, []);
 
   const { data: tasks, isLoading } = useFetchTasks();
+  const { data: users } = useFetchUsers();
 
-  const projects = [
-    { id: "1", name: "Project A" },
-    { id: "2", name: "Project B" },
-  ];
+  const handleCreateTask = () => {
+    if (user.role !== "Viewer") {
+      setSelectedTask(null);
+      setOpen(true);
+    } else {
+      setOpenToaster(true);
+    }
+  };
 
-  const users = [
-    { email: "john@example.com", username: "JohnDoe" },
-    { email: "jane@example.com", username: "JaneDoe" },
-  ];
+  const handleModifyTask = (task: RowData) => {
+    setSelectedTask(task);
+    setOpen(true);
+  };
 
-  const taskColumns = [
-    { id: "task_title", label: "Title" },
-    { id: "task_description", label: "Description" },
-    { id: "due_date", label: "Due Date" },
-    { id: "task_owner", label: "Owner" },
-    { id: "assignee_email", label: "Assignee" },
-    { id: "status", label: "Status" },
-  ];
+  const handleCloseModal = () => {
+    setSelectedTask(null);
+    setOpen(false);
+  };
 
   return (
-    <Box sx={{ width: "100vw", px: 2, mt: 10 }}>
+    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
+      <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpen(true)}
-        >
+        <Button variant="contained" color="primary" onClick={handleCreateTask}>
           Create Task
         </Button>
       </Box>
       <ReusableTable
-        columns={taskColumns}
+        columns={TASK_COLUMNS}
         rows={tasks?.data?.task_data}
-        onUpdate={() => {}}
+        onUpdate={handleModifyTask}
         onDelete={() => {}}
         isLoading={isLoading}
       />
-      ;
       <CustomModal
         modalType="task"
         open={open}
-        onClose={() => setOpen(false)}
-        projects={projects}
-        users={users}
+        onClose={handleCloseModal}
+        users={users?.data?.data}
+        task={selectedTask}
+        setTask={setSelectedTask}
       />
     </Box>
   );

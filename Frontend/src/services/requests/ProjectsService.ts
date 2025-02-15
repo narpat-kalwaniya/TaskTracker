@@ -8,11 +8,11 @@ export const ProjectsService = {
     return data?.data?.project_data;
   },
   createProject: async (payload: {
-    project_title: string;
-    project_description: string;
-    project_end_date: Dayjs;
-    creator_email: string;
-    creator_username: string;
+    project_title: string | undefined;
+    project_description: string | undefined;
+    project_end_date: Dayjs | null;
+    creator_email: string | undefined;
+    creator_username: string | undefined;
   }) => {
     return axios.post(API_ENDPOINTS.CreateProject, payload);
   },

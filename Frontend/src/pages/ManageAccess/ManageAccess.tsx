@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import ChartContainer from "../../components/TableChartContainer";
 import FullscreenViewContainerWrapper from "../../components/FullscreenViewContainer";
-import ReusableTable from "../../components/Table";
+// import ReusableTable from "../../components/Table";
 
 const data = [
   {
@@ -97,13 +97,13 @@ const ManageAccess = () => {
       >
         {() => (
           <>
-            <ReusableTable
+            {/* <ReusableTable
               columns={Object.keys(data[0]).map((data) => ({
                 id: data,
                 label: data,
               }))}
               rows={data}
-            />
+            /> */}
             {/* <TableComponent
               data={modelBetaResults || []}
               fullscreen={fullScreen}

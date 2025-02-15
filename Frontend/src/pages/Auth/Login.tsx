@@ -10,7 +10,7 @@ const GoogleSSO = () => {
   const navigate = useNavigate();
 
   const { data, isFetching, isLoading } = useFetchUserInfo({
-    email: userInfo ? "sumit.kumar2@tigeranalytics.com" : "",
+    email: userInfo?.email,
   });
 
   const userData = useMemo(() => {
@@ -21,6 +21,8 @@ const GoogleSSO = () => {
     if (data?.data?.app_access) {
       sessionStorage.setItem("UserDetails", JSON.stringify(data));
       navigate("/");
+    } else if (data !== null && !data?.data?.app_access) {
+      navigate("/access-denied");
     } else {
       navigate("/login");
     }

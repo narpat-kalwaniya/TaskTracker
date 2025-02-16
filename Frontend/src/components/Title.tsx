@@ -51,7 +51,7 @@ const Title: React.FC<TitleProps> = ({
         my: 3,
         p: 2.5,
         borderRadius: "8px",
-        border: "1px solid #F0F0FA",
+        border: "1px solid #3333331A",
         background: "#fff",
       }}
     >

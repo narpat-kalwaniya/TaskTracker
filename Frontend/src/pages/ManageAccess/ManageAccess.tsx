@@ -9,6 +9,7 @@ import { useState } from "react";
 import AddUser from "../../components/AddUser";
 import { useNavigate } from "react-router-dom";
 import Message from "../../components/Message";
+import { useDeleteUser } from "../../services/hooks/useManageAccess";
 
 const ManageAccess = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -26,6 +27,7 @@ const ManageAccess = () => {
   };
 
   const { data: users, isFetching, isLoading, refetch } = useFetchUsers();
+  const { mutateAsync } = useDeleteUser();
 
   const handleAddUserOpen = () => {
     setIsOpen(true);
@@ -36,6 +38,9 @@ const ManageAccess = () => {
 
   const onBack = () => {
     navigate("/projects");
+  };
+  const handleDelete = (row: any) => {
+    mutateAsync(row.user_email);
   };
   return (
     <Box sx={{ width: "90%", mx: "5%" }}>
@@ -57,7 +62,7 @@ const ManageAccess = () => {
         onBack={onBack}
       />
       <FullscreenViewContainerWrapper
-        title={"User List"}
+        title={"Users List"}
         container={(handleFullscreenOpen, children, title) => (
           <ChartContainer
             chartTitle={title}
@@ -69,9 +74,12 @@ const ManageAccess = () => {
           </ChartContainer>
         )}
       >
-        {() => (
+        {(fullscreen) => (
           <>
             <ReusableTable
+              isDelete={true}
+              onDelete={handleDelete}
+              fullscreen={fullscreen}
               onUpdate={() => {}}
               columns={USERS_COLUMN}
               rows={

@@ -24,7 +24,7 @@ function App() {
                   marginTop: "64px",
                   height: "auto",
                   minHeight: "100vh",
-                  background: "#F0F0FA",
+                  background: "#F9FAFB",
                   paddingRight: "120px",
                 }}
               >

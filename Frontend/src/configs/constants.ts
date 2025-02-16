@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
   UpdateTask: "https://fsd-case-study.onrender.com/api/update_task/",
   UserInfo: "https://fsd-case-study.onrender.com/api/get_user_list",
   AddUser: "https://fsd-case-study.onrender.com/api/add_user",
+  deleteUser: "https://fsd-case-study.onrender.com/api/delete_user",
 };
 
 export const TASK_STATUS_OPTIONS = [

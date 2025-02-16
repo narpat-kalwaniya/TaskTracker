@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useMemo, useState } from "react";
 import ReusableTable, { RowData } from "../components/Table";
 import CustomModal from "../components/Modal";
@@ -7,11 +7,18 @@ import { TASK_COLUMNS } from "../configs/constants";
 import { useFetchUsers } from "../services/hooks/useFetchUsers";
 import { getUserDetails } from "../utils/helper";
 import Toaster from "../components/Snackbar";
+import Title from "../components/Title";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import ChartContainer from "../components/TableChartContainer";
+import FullscreenViewContainerWrapper from "../components/FullscreenViewContainer";
 
 const TaskTracker = () => {
   const [open, setOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<RowData | null>(null);
   const [openToaster, setOpenToaster] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const user = useMemo(() => {
     const userInfo = getUserDetails();
@@ -22,7 +29,7 @@ const TaskTracker = () => {
   const { data: users } = useFetchUsers();
 
   const handleCreateTask = () => {
-    if (user.role !== "Viewer") {
+    if (user.role !== "viewer") {
       setSelectedTask(null);
       setOpen(true);
     } else {
@@ -39,22 +46,48 @@ const TaskTracker = () => {
     setSelectedTask(null);
     setOpen(false);
   };
+  const handleBack = () => {
+    navigate("/projects");
+  };
 
   return (
     <Box sx={{ width: "90vw", mx: "5%", mt: 2 }}>
       <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button variant="contained" color="primary" onClick={handleCreateTask}>
-          Create Task
-        </Button>
+        <Title
+          project_name={`Project : ${location.state?.row?.project_name}`}
+          description={[location.state?.row?.description]}
+          buttonTitle="Create Project"
+          handleButtonClick={handleCreateTask}
+          onBack={handleBack}
+        />
       </Box>
-      <ReusableTable
-        columns={TASK_COLUMNS}
-        rows={tasks?.data?.task_data}
-        onUpdate={handleModifyTask}
-        onDelete={() => {}}
-        isLoading={isLoading}
-      />
+      <FullscreenViewContainerWrapper
+        title={"Task List"}
+        container={(handleFullscreenOpen, children, title) => (
+          <ChartContainer
+            chartTitle={title}
+            handleFullscreenOpen={handleFullscreenOpen}
+            data={tasks?.data?.task_data}
+            containerHeight="auto"
+          >
+            {children}
+          </ChartContainer>
+        )}
+      >
+        {(fullscreen) => (
+          <>
+            <ReusableTable
+              fullscreen={fullscreen}
+              columns={TASK_COLUMNS}
+              rows={tasks?.data?.task_data}
+              onUpdate={handleModifyTask}
+              onDelete={() => {}}
+              isLoading={isLoading}
+            />
+          </>
+        )}
+      </FullscreenViewContainerWrapper>
       <CustomModal
         modalType="task"
         open={open}

@@ -29,6 +29,10 @@ export const ManageAccessService = {
     const { data } = await axios.post(API_ENDPOINTS.AddUser, payload);
     return data;
   },
+  deleteUser: async (email: string): Promise<any> => {
+    const { data } = await axios.post(API_ENDPOINTS.deleteUser, email);
+    return data;
+  },
 };
 
 export default ManageAccessService;

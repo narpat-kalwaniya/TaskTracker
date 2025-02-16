@@ -9,6 +9,7 @@ import {
   Paper,
   IconButton,
   Skeleton,
+  Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ interface ReusableTableProps {
   columns: Column[];
   rows: RowData[];
   onUpdate: (updatedRow: RowData) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   isLoading: boolean;
 }
 
@@ -103,8 +104,10 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                   key={row.id}
                   onClick={() => handleProjectRowClick(row)}
                   sx={{
-                    cursor: row.project_id ? "pointer" : "default",
-                    backgroundColor: row.project_id ? "transparent" : "#f5f5f5",
+                    cursor: row?.project_id ? "pointer" : "default",
+                    backgroundColor: row?.project_id
+                      ? "transparent"
+                      : "transparent",
                   }}
                 >
                   {columns.map((column) => (
@@ -115,10 +118,24 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                           column.id === "status"
                             ? STATUS_COLORS[row[column.id]] || "inherit"
                             : "inherit",
-                        fontWeight: column.id === "status" ? "bold" : "normal",
                       }}
                     >
-                      {row[column.id]}
+                      <Box
+                        sx={{
+                          fontWeight:
+                            column.id === "status" ? "bold" : "normal",
+                          color: column.id === "access" ? "#0c8618" : "inherit",
+                          background:
+                            column.id === "access" ? "#66BB6E21" : "inherit",
+                          borderRadius:
+                            column.id === "access" ? "16px" : "inherit",
+                          py: column.id === "access" ? "8px" : "inherit",
+                          px: column.id === "access" ? 4 : 0,
+                          width: column.id === "access" ? "170px" : "inherit",
+                        }}
+                      >
+                        {row[column.id]}
+                      </Box>
                     </TableCell>
                   ))}
                   <TableCell>

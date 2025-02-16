@@ -8,6 +8,7 @@ import AccessDenied from "./pages/Auth/AccessDenied";
 import { error_messages } from "./configs/constants";
 import ProtectedRoutes from "./pages/Auth/ProtectedRoutes";
 import LoginError from "./pages/Auth/LoginError";
+import ManageAccess from "./pages/ManageAccess/ManageAccess";
 
 function App() {
   return (
@@ -21,13 +22,17 @@ function App() {
               <div
                 style={{
                   marginTop: "64px",
-                  height: "100vh",
+                  height: "auto",
+                  minHeight: "100vh",
+                  background: "#F0F0FA",
+                  paddingRight: "120px",
                 }}
               >
                 <Routes>
                   <Route path="/" element={<ProjectTracker />} />
                   <Route path="/tasks" element={<TaskTracker />} />
                   <Route path="/projects" element={<ProjectTracker />} />
+                  <Route path="/manage-access" element={<ManageAccess />} />
                 </Routes>
               </div>
             </>

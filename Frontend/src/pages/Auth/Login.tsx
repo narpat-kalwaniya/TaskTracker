@@ -4,13 +4,14 @@ import { useFetchUserInfo } from "../../services/hooks/useAuth";
 import { CircularProgress, Box, Button } from "@mui/material";
 import { getUserDetails } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
+import GoogleIcon from "../../assets/google.png";
 
 const GoogleSSO = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   const { data, isFetching, isLoading } = useFetchUserInfo({
-    email: userInfo ? "sumit.kumar2@tigeranalytics.com" : "",
+    email: userInfo?.email,
   });
 
   const userData = useMemo(() => {
@@ -21,6 +22,8 @@ const GoogleSSO = () => {
     if (data?.data?.app_access) {
       sessionStorage.setItem("UserDetails", JSON.stringify(data));
       navigate("/");
+    } else if (data !== null && !data?.data?.app_access) {
+      navigate("/access-denied");
     } else {
       navigate("/login");
     }
@@ -75,7 +78,18 @@ const GoogleSSO = () => {
       }}
     >
       {!(isFetching || isLoading) && (
-        <Button variant="contained" onClick={() => login()}>
+        <Button
+          variant="contained"
+          sx={{ px: 4, py: 1.5, borderRadius: "30px", fontSize: "16px" }}
+          startIcon={
+            <img
+              src={GoogleIcon}
+              alt="Google Icon"
+              style={{ width: "28px", height: "28px" }}
+            />
+          }
+          onClick={() => login()}
+        >
           Login with Google
         </Button>
       )}

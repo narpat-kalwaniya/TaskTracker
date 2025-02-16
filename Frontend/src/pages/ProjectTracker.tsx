@@ -6,11 +6,13 @@ import { useFetchProjects } from "../services/hooks/useFetchProjects";
 import { PROJECT_COLUMNS } from "../configs/constants";
 import { getUserDetails } from "../utils/helper";
 import Toaster from "../components/Snackbar";
+import { useNavigate } from "react-router-dom";
 
 const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
   const [openToaster, setOpenToaster] = useState<boolean>(false);
   const { data: projects, isLoading } = useFetchProjects();
+  const navigate = useNavigate();
 
   const user = useMemo(() => {
     const userInfo = getUserDetails();
@@ -24,10 +26,25 @@ const ProjectTracker = () => {
       setOpenToaster(true);
     }
   };
+
+  const handleManageAccessClick = () => {
+    navigate("/manage-access");
+  };
+
   return (
-    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
+    <Box sx={{ width: "90vw", mx: "5%", mt: 2 }}>
       <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        {user?.role === "Admin" && (
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mr: 2 }}
+            onClick={handleManageAccessClick}
+          >
+            Manage Access
+          </Button>
+        )}
         <Button
           variant="contained"
           color="primary"

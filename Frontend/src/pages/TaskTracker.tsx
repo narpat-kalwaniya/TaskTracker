@@ -41,7 +41,7 @@ const TaskTracker = () => {
   };
 
   return (
-    <Box sx={{ width: "100vw", px: 1, mt: 2 }}>
+    <Box sx={{ width: "90vw", mx: "5%", mt: 2 }}>
       <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button variant="contained" color="primary" onClick={handleCreateTask}>

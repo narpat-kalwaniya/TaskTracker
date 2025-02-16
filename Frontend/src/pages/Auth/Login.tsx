@@ -4,6 +4,7 @@ import { useFetchUserInfo } from "../../services/hooks/useAuth";
 import { CircularProgress, Box, Button } from "@mui/material";
 import { getUserDetails } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
+import GoogleIcon from "../../assets/google.png";
 
 const GoogleSSO = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -77,7 +78,18 @@ const GoogleSSO = () => {
       }}
     >
       {!(isFetching || isLoading) && (
-        <Button variant="contained" onClick={() => login()}>
+        <Button
+          variant="contained"
+          sx={{ px: 4, py: 1.5, borderRadius: "30px", fontSize: "16px" }}
+          startIcon={
+            <img
+              src={GoogleIcon}
+              alt="Google Icon"
+              style={{ width: "28px", height: "28px" }}
+            />
+          }
+          onClick={() => login()}
+        >
           Login with Google
         </Button>
       )}

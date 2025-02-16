@@ -3,7 +3,7 @@ import AuthService from "../requests/AuthService";
 import { UserInfo } from "../requests/AuthService";
 
 export const useFetchUsers = () => {
-  const { data, isFetching, isLoading } = useQuery<UserInfo, Error>({
+  const { data, isFetching, isLoading, refetch } = useQuery<UserInfo, Error>({
     queryKey: ["UsersList"],
     queryFn: () => AuthService.fetchUserInfo(),
     enabled: true,
@@ -11,5 +11,5 @@ export const useFetchUsers = () => {
     retry: false,
     refetchOnWindowFocus: false,
   });
-  return { data, isFetching, isLoading };
+  return { data, isFetching, isLoading, refetch };
 };

@@ -22,7 +22,10 @@ function App() {
               <div
                 style={{
                   marginTop: "64px",
-                  height: "100vh",
+                  height: "auto",
+                  minHeight: "100vh",
+                  background: "#F0F0FA",
+                  paddingRight: "120px",
                 }}
               >
                 <Routes>

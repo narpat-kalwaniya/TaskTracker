@@ -50,9 +50,10 @@ const ChartContainer: React.FC<ContainerProps> = ({
   return (
     <Paper
       sx={{
-        width: "100%",
+        width: "90vw",
         height: containerHeight || "50vh",
         borderRadius: "8px",
+        my: 3,
       }}
       elevation={0}
     >
@@ -66,7 +67,7 @@ const ChartContainer: React.FC<ContainerProps> = ({
       >
         <Box
           sx={{
-            fontSize: "14px",
+            fontSize: "16px",
             alignSelf: "center",
             display: "flex",
             alignItems: "center",

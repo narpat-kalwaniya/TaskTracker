@@ -1,95 +1,69 @@
 import { Box } from "@mui/material";
 import ChartContainer from "../../components/TableChartContainer";
 import FullscreenViewContainerWrapper from "../../components/FullscreenViewContainer";
-// import ReusableTable from "../../components/Table";
-
-const data = [
-  {
-    project_id: 1,
-    start_date: "2025-02-12",
-    project_owner_email: "sumit.kumar2@tigeranalytics.com",
-    project_name: "FSD Project 1",
-    end_date: "2025-02-19",
-    description: "This is the first project",
-    project_owner: "Sumit Kumar",
-  },
-  {
-    project_id: 2,
-    start_date: "2025-02-12",
-    project_owner_email: "sumit.kumar2@tigeranalytics.com",
-    project_name: "Sumit Project",
-    end_date: "2025-02-24",
-    description: "This is MY project",
-    project_owner: "Sumit Kumar",
-  },
-  {
-    project_id: 3,
-    start_date: "2025-02-12",
-    project_owner_email: "kishan.verma@tigeranalytics.com",
-    project_name: "Kishan Project",
-    end_date: "2025-02-28",
-    description: "This is Kishan's project",
-    project_owner: "Kishan Verma",
-  },
-  {
-    project_id: 4,
-    start_date: "2025-02-13",
-    project_owner_email: "kishan.verma@tigeranalytics.com",
-    project_name: "Kishan Project",
-    end_date: "2025-02-28",
-    description: "This is Kishan's project",
-    project_owner: "Kishan Verma",
-  },
-  {
-    project_id: 5,
-    start_date: "2025-02-13",
-    project_owner_email: "email",
-    project_name: "MROI",
-    end_date: "2025-02-27",
-    description: "marketing mix application for pharma businesses",
-    project_owner: "name",
-  },
-  {
-    project_id: 6,
-    start_date: "2025-02-13",
-    project_owner_email: "email",
-    project_name: "Carrier",
-    end_date: "2025-02-26",
-    description: "Gen AI POC",
-    project_owner: "name",
-  },
-  {
-    project_id: 7,
-    start_date: "2025-02-13",
-    project_owner_email: "email",
-    project_name: "Project A",
-    end_date: "2025-02-13",
-    description: "desc",
-    project_owner: "name",
-  },
-  {
-    project_id: 8,
-    start_date: "2025-02-13",
-    project_owner_email: "email",
-    project_name: "FSD 2",
-    end_date: "2025-02-13",
-    description:
-      "Testing the edge case what if the description of the project is very lengthy, so just wanted the text to be lengthy",
-    project_owner: "name",
-  },
-];
+import { useFetchUsers } from "../../services/hooks/useFetchUsers";
+import ReusableTable from "../../components/Table";
+import Title from "../../components/Title";
+import { USERS_COLUMN } from "../../configs/constants";
+import { useState } from "react";
+import AddUser from "../../components/AddUser";
+import { useNavigate } from "react-router-dom";
+import Message from "../../components/Message";
 
 const ManageAccess = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isMessage, setIsMessage] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleMessage = (message: string) => {
+    setSnackbarMessage(message);
+    setIsMessage(true);
+  };
+  const handleMessageClose = () => {
+    setIsMessage(false);
+  };
+
+  const { data: users, isFetching, isLoading, refetch } = useFetchUsers();
+
+  const handleAddUserOpen = () => {
+    setIsOpen(true);
+  };
+  const handleAddUserClose = () => {
+    setIsOpen(false);
+  };
+
+  const onBack = () => {
+    navigate("/projects");
+  };
   return (
     <Box sx={{ width: "90%", mx: "5%" }}>
+      <Box sx={{ position: "absolute", top: "20%", left: "40%" }}>
+        <Message
+          open={isMessage}
+          isSuccess={snackbarMessage !== "User already Exists"}
+          message={snackbarMessage}
+          onClose={handleMessageClose}
+        />
+      </Box>
+      <Title
+        project_name="Manage Access"
+        description={[
+          "Manage user access, roles, and permissions to ensure security and compliance",
+        ]}
+        buttonTitle="Add User"
+        handleButtonClick={handleAddUserOpen}
+        onBack={onBack}
+      />
       <FullscreenViewContainerWrapper
-        title={"Manage Access"}
+        title={"User List"}
         container={(handleFullscreenOpen, children, title) => (
           <ChartContainer
             chartTitle={title}
             handleFullscreenOpen={handleFullscreenOpen}
-            data={data}
-            // containerHeight="auto"
+            data={users?.data?.data}
+            containerHeight="auto"
           >
             {children}
           </ChartContainer>
@@ -97,31 +71,26 @@ const ManageAccess = () => {
       >
         {() => (
           <>
-            {/* <ReusableTable
-              columns={Object.keys(data[0]).map((data) => ({
-                id: data,
-                label: data,
-              }))}
-              rows={data}
-            /> */}
-            {/* <TableComponent
-              data={modelBetaResults || []}
-              fullscreen={fullScreen}
-              columns={
-                Array.isArray(modelBetaResults) && modelBetaResults.length > 0
-                  ? Object.keys(modelBetaResults[0])?.map((data) => ({
-                      id: data,
-                      label: data,
-                      width: getColumnWidth(data),
-                    }))
-                  : []
+            <ReusableTable
+              onUpdate={() => {}}
+              columns={USERS_COLUMN}
+              rows={
+                users?.data?.data.map((item) => ({
+                  ...item,
+                  access: "Access Granted",
+                })) || []
               }
-              tableTitle={TITLES_CONFIGS.resultsBetaTableTitle}
-              isLoading={isModelBetaResultsLoading}
-            /> */}
+              isLoading={isLoading || isFetching}
+            />
           </>
         )}
       </FullscreenViewContainerWrapper>
+      <AddUser
+        open={isOpen}
+        onClose={handleAddUserClose}
+        refetch={refetch}
+        onMessage={handleMessage}
+      />
     </Box>
   );
 };

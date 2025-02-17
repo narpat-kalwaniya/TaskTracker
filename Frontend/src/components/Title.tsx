@@ -80,7 +80,7 @@ const Title: React.FC<TitleProps> = ({
               </Grid>
             )}
             <Grid item>
-              <Typography sx={{ fontSize: "18px", fontWeight: "bold" }}>
+              <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#333333" }}>
                 {project_name}
               </Typography>
             </Grid>

@@ -57,7 +57,7 @@ const TaskTracker = () => {
         <Title
           project_name={`Project : ${location.state?.row?.project_name}`}
           description={[location.state?.row?.description]}
-          buttonTitle="Create Project"
+          buttonTitle="Create Task"
           handleButtonClick={handleCreateTask}
           onBack={handleBack}
         />
@@ -78,6 +78,7 @@ const TaskTracker = () => {
         {(fullscreen) => (
           <>
             <ReusableTable
+              isEdit={true}
               fullscreen={fullscreen}
               columns={TASK_COLUMNS}
               rows={tasks?.data?.task_data}

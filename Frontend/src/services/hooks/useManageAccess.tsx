@@ -16,7 +16,7 @@ export const useDeleteUser = () => {
   return useMutation({
     mutationFn: ManageAccessService.deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["newUser"] });
+      queryClient.invalidateQueries({ queryKey: ["deleteUser"] });
     },
   });
 };

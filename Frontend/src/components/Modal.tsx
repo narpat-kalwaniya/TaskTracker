@@ -123,13 +123,13 @@ const CustomModal: React.FC<ModalProps> = ({
     } else {
       if (data.project_title) createProject(data);
     }
+    onClose();
     setTitle("");
     setDescription("");
     setDueDate(null);
     setAssignee("");
     setStatus("New");
     setTask(null);
-    onClose();
   };
 
   return (

@@ -104,7 +104,7 @@ export default function NavBar() {
             sx={{ marginLeft: 3 }}
           >
             <Tab label="Projects" />
-            <Tab label="Tasks" />
+            {/* <Tab label="Tasks" /> */}
           </Tabs>
           <Search sx={{ ml: "auto", mr: 2 }}>
             <SearchIconWrapper>

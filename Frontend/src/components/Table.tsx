@@ -41,6 +41,7 @@ interface ReusableTableProps {
   isLoading: boolean;
   fullscreen?: boolean;
   isDelete?: boolean;
+  isEdit?: boolean;
   tableHeight?: string;
 }
 
@@ -48,6 +49,7 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
   columns,
   rows,
   isDelete,
+  isEdit,
   onUpdate,
   onDelete,
   isLoading,
@@ -140,7 +142,6 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                   <TableRow
                     hover
                     key={row.id}
-                    onClick={() => handleProjectRowClick(row)}
                     sx={{
                       cursor: row?.project_id ? "pointer" : "default",
                       backgroundColor: row?.project_id
@@ -154,13 +155,18 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                     {columns.map((column) => (
                       <TableCell
                         key={column.id}
+                        onClick={
+                          column.id === "project_name"
+                            ? () => handleProjectRowClick(row)
+                            : () => {}
+                        }
                         sx={{
                           color:
                             column.id === "status"
                               ? STATUS_COLORS[row[column.id]] || "inherit"
                               : "inherit",
                           "&.MuiTableCell-root": {
-                            py: 0,
+                            py: !(isEdit && isDelete) ? 1.5 : 0,
                             maxHeight: "32px",
                           },
                         }}
@@ -192,12 +198,14 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                       </TableCell>
                     ))}
                     <TableCell>
-                      <IconButton
-                        onClick={() => handleEditTask(row)}
-                        color="default"
-                      >
-                        <EditIcon />
-                      </IconButton>
+                      {isEdit && (
+                        <IconButton
+                          onClick={() => handleEditTask(row)}
+                          color="default"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      )}
                       {isDelete && (
                         <IconButton
                           onClick={() => {
@@ -208,6 +216,7 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                           <Delete />
                         </IconButton>
                       )}
+                      {/* <IconButton color="default"></IconButton> */}
                     </TableCell>
                   </TableRow>
                 ))}

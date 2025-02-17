@@ -7,17 +7,22 @@ import { PROJECT_COLUMNS } from "../configs/constants";
 import { getUserDetails } from "../utils/helper";
 import Toaster from "../components/Snackbar";
 import { useNavigate } from "react-router-dom";
+import { useDeleteProject } from "../services/hooks/useDeleteProject";
+import Loader from "../components/Loader";
 
 const ProjectTracker = () => {
   const [open, setOpen] = useState(false);
   const [openToaster, setOpenToaster] = useState<boolean>(false);
-  const { data: projects, isLoading } = useFetchProjects();
+  const [isLoader, setIsLoader] = useState<boolean>(false);
+  const { data: projects, isLoading, refetch } = useFetchProjects();
   const navigate = useNavigate();
 
   const user = useMemo(() => {
     const userInfo = getUserDetails();
     return userInfo?.data?.data[0];
   }, []);
+
+  const { mutateAsync } = useDeleteProject();
 
   const handleCreateProject = () => {
     if (user.role !== "viewer") {
@@ -29,6 +34,12 @@ const ProjectTracker = () => {
 
   const handleManageAccessClick = () => {
     navigate("/manage-access");
+  };
+  const handleDeleteProject = async (row: any) => {
+    setIsLoader(true);
+    await mutateAsync(row?.project_id);
+    refetch();
+    setIsLoader(false);
   };
 
   return (
@@ -53,11 +64,14 @@ const ProjectTracker = () => {
           Create Project
         </Button>
       </Box>
+      <Loader open={isLoader} />
       <ReusableTable
         columns={PROJECT_COLUMNS}
         rows={projects}
+        isDelete={user?.role === "admin"}
+        isEdit={false}
         onUpdate={() => {}}
-        onDelete={() => {}}
+        onDelete={handleDeleteProject}
         isLoading={isLoading}
       />
       <CustomModal

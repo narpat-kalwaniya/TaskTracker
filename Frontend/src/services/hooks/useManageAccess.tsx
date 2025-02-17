@@ -10,3 +10,13 @@ export const useAddNewUser = () => {
     },
   });
 };
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ManageAccessService.deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["newUser"] });
+    },
+  });
+};

@@ -74,13 +74,19 @@ const GoogleSSO = () => {
         justifyContent: "center",
         alignItems: "center",
         position: "fixed",
-        left: "45%",
+        left: "43%",
       }}
     >
       {!(isFetching || isLoading) && (
         <Button
           variant="contained"
-          sx={{ px: 4, py: 1.5, borderRadius: "30px", fontSize: "16px" }}
+          sx={{
+            px: 4,
+            py: 1.5,
+            borderRadius: "30px",
+            fontSize: "16px",
+            background: "#0095FF",
+          }}
           startIcon={
             <img
               src={GoogleIcon}

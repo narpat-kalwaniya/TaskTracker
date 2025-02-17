@@ -53,6 +53,7 @@ const ChartContainer: React.FC<ContainerProps> = ({
         width: "90vw",
         height: containerHeight || "50vh",
         borderRadius: "8px",
+        border: "1px solid #3333331A",
         my: 3,
       }}
       elevation={0}
@@ -67,13 +68,13 @@ const ChartContainer: React.FC<ContainerProps> = ({
       >
         <Box
           sx={{
-            fontSize: "16px",
+            fontSize: "20px",
             alignSelf: "center",
             display: "flex",
             alignItems: "center",
           }}
         >
-          <Box sx={{ fontWeight: "bold" }}>{chartTitle}</Box>
+          <Box sx={{ fontWeight: "bold", fontSize: "24px" }}>{chartTitle}</Box>
           {RenderInfoIcon && RenderInfoIcon}
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -82,6 +83,7 @@ const ChartContainer: React.FC<ContainerProps> = ({
           <IconButton
             disabled={disable}
             onClick={() => handleDownloadData(data)}
+            sx={{ mr: 2 }}
           >
             <FileDownloadOutlinedIcon />
           </IconButton>

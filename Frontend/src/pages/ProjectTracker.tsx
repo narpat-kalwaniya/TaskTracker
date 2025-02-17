@@ -20,7 +20,7 @@ const ProjectTracker = () => {
   }, []);
 
   const handleCreateProject = () => {
-    if (user.role !== "Viewer") {
+    if (user.role !== "viewer") {
       setOpen(true);
     } else {
       setOpenToaster(true);
@@ -35,7 +35,7 @@ const ProjectTracker = () => {
     <Box sx={{ width: "90vw", mx: "5%", mt: 2 }}>
       <Toaster open={openToaster} setOpen={setOpenToaster} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        {user?.role === "Admin" && (
+        {user?.role === "admin" && (
           <Button
             variant="contained"
             color="primary"

@@ -16,6 +16,12 @@ export const ProjectsService = {
   }) => {
     return axios.post(API_ENDPOINTS.CreateProject, payload);
   },
+  deleteProject: async (project_Id: string): Promise<any> => {
+    const { data } = await axios.delete(
+      `${API_ENDPOINTS.deleteProject}/${project_Id}`
+    );
+    return data;
+  },
 };
 
 export default ProjectsService;

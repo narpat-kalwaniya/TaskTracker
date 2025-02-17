@@ -10,11 +10,13 @@ import AddUser from "../../components/AddUser";
 import { useNavigate } from "react-router-dom";
 import Message from "../../components/Message";
 import { useDeleteUser } from "../../services/hooks/useManageAccess";
+import Loader from "../../components/Loader";
 
 const ManageAccess = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isMessage, setIsMessage] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isLoader, setIsLoader] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -39,8 +41,11 @@ const ManageAccess = () => {
   const onBack = () => {
     navigate("/projects");
   };
-  const handleDelete = (row: any) => {
-    mutateAsync(row.user_email);
+  const handleDelete = async (row: any) => {
+    setIsLoader(true);
+    await mutateAsync(row.user_email);
+    setIsLoader(false);
+    refetch();
   };
   return (
     <Box sx={{ width: "90%", mx: "5%" }}>
@@ -51,6 +56,7 @@ const ManageAccess = () => {
           message={snackbarMessage}
           onClose={handleMessageClose}
         />
+        <Loader open={isLoader || isLoading || isFetching} />
       </Box>
       <Title
         project_name="Manage Access"

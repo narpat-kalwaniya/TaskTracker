@@ -30,7 +30,7 @@ export const ManageAccessService = {
     return data;
   },
   deleteUser: async (email: string): Promise<any> => {
-    const { data } = await axios.post(API_ENDPOINTS.deleteUser, email);
+    const { data } = await axios.delete(`${API_ENDPOINTS.deleteUser}/${email}`);
     return data;
   },
 };
